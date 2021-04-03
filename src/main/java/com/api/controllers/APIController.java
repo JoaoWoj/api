@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class apiController {
+public class APIController {
 	
 // Teste para ver se chamadas da API estão funcionando	
 	@GetMapping("/")
