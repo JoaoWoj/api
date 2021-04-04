@@ -28,6 +28,7 @@ public class TicketModel {
 	
 	@Column(name = "data_abertura")
 	private Date dataAbertura;
+	
 	@Column(name = "data_encerramento")
 	private Date dataEncerramento;
 	
