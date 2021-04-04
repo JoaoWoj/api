@@ -25,7 +25,7 @@ public class APIController {
 	
 // Teste para ver se chamadas da API estão funcionando	
 	@GetMapping("/")
-	public String testeChamadaAPI() {
+	public String testeRequisicaoAPI() {
 		return "OK!";
 	}
 	
