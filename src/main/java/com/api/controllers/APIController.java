@@ -4,16 +4,20 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.models.TicketModel;
+import com.api.repository.TicketCustomRepository;
 import com.api.repository.TicketRepository;
 
 @RestController
@@ -22,6 +26,8 @@ public class APIController {
 	
 	@Autowired
 	private TicketRepository ticketRepository;
+	@Autowired
+	private TicketCustomRepository ticketCustomRepository;
 	
 // Teste para ver se chamadas da API estão funcionando	
 	@GetMapping("/")
@@ -30,14 +36,34 @@ public class APIController {
 	}
 	
 // Problema 01	
-	@GetMapping("/listarTickets")
-	public List<TicketModel> listarTickets() {
-		return ticketRepository.findAll();
+	@GetMapping("/listarTickets/mes={mes}&ano={ano}")
+	public List<TicketModel> listarTickets(@PathVariable Integer mes, @PathVariable Integer ano) {
+		try {
+			List<TicketModel> lstTickets = this.ticketCustomRepository.findByMesAno(mes, ano);
+
+//			List<TicketModel> lstOrdenadaCliente = lstTickets.stream().sorted((a,b) -> a.getCliente().getId().equals(b.getCliente().getId()))
+//					.co;
+			
+			List<TicketModel> lstRetorno = new ArrayList<TicketModel>();
+			List<TicketModel> lstOrdenadaModulo = new ArrayList<TicketModel>();
+			
+			return lstTickets;
+		} catch (Exception e) {
+			return new ArrayList<TicketModel>();
+		}
 	}
 	
 	@PostMapping("/criarTicket")
-	public String criarTicket() {
-		return "Criar Ticket Ok!";
+	public String criarTicket(@RequestBody TicketModel ticket) {
+		try {
+			if(ticket.getDataAbertura() == null) {
+				ticket.setDataAbertura(new Date());
+			}
+			this.ticketRepository.save(ticket);
+			return "Foi criado o ticket com o id: " + ticket.getId();
+		} catch (Exception e) {
+			return "Não foi possível criar o ticket!";
+		}
 	}
 	
 // Problema 02
@@ -69,5 +95,4 @@ public class APIController {
 			return "Ocorreu um erro durante a execução: " + e.getMessage();
 		}
 	}
-
 }
