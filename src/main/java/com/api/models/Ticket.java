@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ticket")
-public class TicketModel {
+public class Ticket {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,11 +22,11 @@ public class TicketModel {
 	
 	@ManyToOne
     @JoinColumn(name = "codcliente")
-	private ClienteModel cliente;
+	private Cliente cliente;
 	
 	@ManyToOne
     @JoinColumn(name = "codmodulo")
-	private ModuloModel modulo;
+	private Modulo modulo;
 	
 	@Column(name = "data_abertura")
 	private Date dataAbertura;
@@ -46,16 +46,16 @@ public class TicketModel {
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
-	public ClienteModel getCliente() {
+	public Cliente getCliente() {
 		return cliente;
 	}
-	public void setCliente(ClienteModel cliente) {
+	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-	public ModuloModel getModulo() {
+	public Modulo getModulo() {
 		return modulo;
 	}
-	public void setModulo(ModuloModel modulo) {
+	public void setModulo(Modulo modulo) {
 		this.modulo = modulo;
 	}
 	public Date getDataAbertura() {

@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "modulo")
-public class ModuloModel {
+public class Modulo {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

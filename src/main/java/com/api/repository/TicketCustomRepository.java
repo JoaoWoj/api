@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Repository;
 
-import com.api.models.TicketModel;
+import com.api.models.Ticket;
 
 @Repository
 public class TicketCustomRepository {
@@ -18,16 +18,17 @@ public class TicketCustomRepository {
 		this.em = em;
 	}
 	
-	public List<TicketModel> findByMesAno(Integer mes, Integer ano) {
+	@SuppressWarnings("unchecked")
+	public List<Ticket> findByMesAno(Integer mes, Integer ano) {
 		try {
 			String query = "SELECT * "
 					+ " FROM ticket "
 					+ " WHERE EXTRACT(MONTH FROM data_abertura) = " + mes + " AND EXTRACT(YEAR FROM data_abertura) = " + ano;
 			
-			return em.createNativeQuery(query, TicketModel.class).getResultList();
+			return em.createNativeQuery(query, Ticket.class).getResultList();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<TicketModel>();
+			return new ArrayList<Ticket>();
 		}
 	}
 }

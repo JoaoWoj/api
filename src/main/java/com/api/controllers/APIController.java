@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.models.TicketModel;
+import com.api.models.Ticket;
+import com.api.models.TicketRetorno;
 import com.api.repository.TicketCustomRepository;
 import com.api.repository.TicketRepository;
 
@@ -37,24 +39,35 @@ public class APIController {
 	
 // Problema 01	
 	@GetMapping("/listarTickets/mes={mes}&ano={ano}")
-	public List<TicketModel> listarTickets(@PathVariable Integer mes, @PathVariable Integer ano) {
+	public TicketRetorno listarTickets(@PathVariable Integer mes, @PathVariable Integer ano) {
 		try {
-			List<TicketModel> lstTickets = this.ticketCustomRepository.findByMesAno(mes, ano);
-
-//			List<TicketModel> lstOrdenadaCliente = lstTickets.stream().sorted((a,b) -> a.getCliente().getId().equals(b.getCliente().getId()))
-//					.co;
+			TicketRetorno retorno = new TicketRetorno();
+			retorno.setTicketsRetorno(this.ticketCustomRepository.findByMesAno(mes, ano));
 			
-			List<TicketModel> lstRetorno = new ArrayList<TicketModel>();
-			List<TicketModel> lstOrdenadaModulo = new ArrayList<TicketModel>();
+			// Count por cliente
+			Map<Object, Long> listaAgrupadaPorClienteCount = retorno.getTicketsRetorno().stream().collect(Collectors.groupingBy(t -> t.getCliente().getNome(), Collectors.counting()));
+			retorno.setQuantidadePorCliente(listaAgrupadaPorClienteCount);
 			
-			return lstTickets;
+			//Agrupa por cliente
+			Map<Object, List<Ticket>> listaAgrupadaPorCliente = retorno.getTicketsRetorno().stream().collect(Collectors.groupingBy(t -> t.getCliente().getId()));
+			retorno.setTicketsPorCliente(listaAgrupadaPorCliente.values().stream().collect(Collectors.toList()));
+			
+			// Count por módulo
+			Map<Object, Long> listaAgrupadaPorModuloCount = retorno.getTicketsRetorno().stream().collect(Collectors.groupingBy(t -> t.getModulo().getNome(), Collectors.counting()));
+			retorno.setQuantidadePorModulo(listaAgrupadaPorModuloCount);
+			
+			//Agrupa por módulo
+			Map<Object, List<Ticket>> listaAgrupadaPorModulo = retorno.getTicketsRetorno().stream().collect(Collectors.groupingBy(t -> t.getModulo().getId()));
+			retorno.setTicketsPorModulo(listaAgrupadaPorModulo.values().stream().collect(Collectors.toList()));
+			
+			return retorno;
 		} catch (Exception e) {
-			return new ArrayList<TicketModel>();
+			return new TicketRetorno();
 		}
 	}
 	
 	@PostMapping("/criarTicket")
-	public String criarTicket(@RequestBody TicketModel ticket) {
+	public String criarTicket(@RequestBody Ticket ticket) {
 		try {
 			if(ticket.getDataAbertura() == null) {
 				ticket.setDataAbertura(new Date());
