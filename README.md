@@ -1,5 +1,8 @@
-# api
+# API
 API Spring para teste de desenvolvedor
+
+# Banco de Dados
+É nescessário configurar o banco no application.properties
 
 # Exemplo das chamadas
 GET - http://localhost:8080/api/
